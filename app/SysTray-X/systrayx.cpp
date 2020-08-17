@@ -159,6 +159,10 @@ SysTrayX::SysTrayX( QObject *parent ) : QObject( parent )
      *  Request preferences from add-on
      */
     getPreferences();
+
+//  Debug: Force icon
+//    slotSetUnreadMail( 99 );
+//    slotSelectIconObjectPref();
 }
 
 

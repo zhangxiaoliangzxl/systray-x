@@ -332,21 +332,29 @@ void    SysTrayXStatusNotifier::renderIcon()
          */
         QPainter painter( &pixmap );
 
-        painter.setFont( QFont("Sans") );
+        QFont font( "Sans" );
+        font.setBold( true );
+
+        QFontMetrics fm( painter.font() );
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 13, 0)
-        double factor = pixmap.width() / ( 3 * painter.fontMetrics().width( "0" ) );
+        int number_width = fm.width( QString::number( m_unread_mail ) );
 #else
-        double factor = pixmap.width() / ( 3 * painter.fontMetrics().horizontalAdvance( "0" ) );
+        int number_width = fm.horizontalAdvance( QString::number( m_unread_mail ) ) );
 #endif
-        QFont font = painter.font();
-        font.setPointSizeF( font.pointSizeF() * ( factor * m_number_size / 10 ) );
-        font.setBold( true );
+        int number_height = fm.height();
+
+        QRect pixmap_rect = pixmap.rect();
+        double sx = (double) pixmap_rect.width() / number_width;
+        double sy = (double) pixmap_rect.height() / number_height;
+        double s = std::min( sx, sy ) * 0.75;
+
+        font.setPointSizeF( font.pointSize() * s * m_number_size / 10.0 );
         painter.setFont( font );
 
         painter.setPen( QColor( m_number_color ) );
 
-        painter.drawText( pixmap.rect(), Qt::AlignCenter, QString::number( m_unread_mail ) );
+        painter.drawText( pixmap_rect, Qt::AlignCenter, QString::number( m_unread_mail ) );
     }
 
     /*
